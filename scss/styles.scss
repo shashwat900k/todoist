@@ -1,0 +1,241 @@
+@import "font-awesome.scss";
+html,body{
+  padding: 0px;
+  margin: 0px;
+  background-color: #FAFAFA;
+  height: 100%;
+}
+
+body.col-xs-12{
+  padding: 0px;
+
+}
+
+.bttn{
+  border: 0px;
+  color: #DB4C3F;
+  background-color:  #DB4C3F;
+  &:focus{
+    outline: none;
+  }
+}
+
+.nav-bar{
+  background-color: #DB4C3F;
+  height: 45px;
+
+  padding: 0px;
+}
+
+.index-toggle{
+  visibility: hidden;
+  .index-toggle-links{
+    color: #FFFFFF;
+    background-color: #DB4C3F;
+    font-size: 150%;
+    padding-top: 12px;
+    border-radius: 0px;
+    width: 120%;
+  }
+}
+
+.content,
+.main-body,
+.left-index{
+  height: 100%;
+  padding: 0px;
+  overflow: auto;
+  // overflow-y: hidden;
+}
+.main-body{
+  padding-right: 0px;
+}
+
+::-webkit-scrollbar{
+  width: 0px;
+  background: transparent;
+}
+.left-index{
+  ul{
+    padding-left: 40%;
+    padding-top: 10px;
+    li{
+      height: 50px;
+      list-style: none;
+      padding-left: 10px;
+      padding-top: 10px;
+      .left-index-icons{
+        font-weight: 100;
+        font-size: 220%;
+      }
+      h5{
+        display: inline;
+        padding-left: 5px;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+
+.main-body{
+  background-color: #FFF;
+}
+
+.addtaskform{
+  display: none;
+  margin-bottom: 15px;
+}
+
+.taskinfo{
+  width: 77%;
+  padding-right: 0px;
+  &:focus{
+    outline: none;
+  }
+}
+.taskdate{
+  width: 20%;
+  padding-left: 0px;
+  margin-left: -5px;
+  &:focus{
+    outline: none;
+  }
+}
+.submittask,
+.canceltask,
+.savetask{
+  margin-top: 5px;
+  border: none;
+  width: 90px;
+  height: 36px;
+  &:focus{
+    outline: none;
+  }
+}
+.submittask,
+.savetask{
+  background-color: #DB4C3F;
+  color: #fff;
+  border: none;
+}
+.canceltask{
+  margin-left: 5px;
+  border: none;
+  background-color: #fff;
+}
+.column1{
+  button{
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #CACACA;
+  }
+}
+
+.allthetasks{
+  width:100%;
+  tr{
+    width: 100%;
+    //margin: 25px;
+    padding: 5px;
+    .column1{
+      width: 8%;
+      button{
+        &:focus{
+          outline: none;
+        }
+      }
+    }
+    .column2{
+      width: 77%;
+      border-bottom: 2px;
+    }
+    .column3{
+      width: 15%;
+      text-align: right;
+      border-bottom: 2px;
+    }
+    td{
+      padding: 7px 0px 7px 7px;
+    }
+    .column2,
+    .column3{
+      padding-left: 2px;
+    }
+  }
+  margin-bottom: 15px;
+}
+
+.tasks-by-day li{
+  &:hover{
+    cursor: pointer;
+    background-color: #fff;
+    font-weight: bold;
+  }
+}
+
+.dynamicnumbers{
+  display: inline;
+  padding-left: 12px;
+
+}
+
+.overduetoday h4
+{
+  color: #DD4B39;
+  border-bottom: 1.5px solid #CACACA;
+  font-weight: 400;
+  padding-bottom: 6px;
+  font-size: 16px;
+}
+
+.today{
+  margin-top: 15px;
+  h4{
+    border-bottom: 1.5px solid #CACACA;
+    font-weight: 600;
+    padding-bottom: 6px;
+    font-size: 16px;
+  }
+}
+
+
+.maintitle{
+  padding: 40px 0px 15px 0px;
+  font-size: 28px;
+  font-weight: 300;
+}
+
+.addtask{
+  margin-top: 40px;
+  color: #DB4C3F;
+  &:hover,
+  &:focus{
+    color: #DB4C3F;
+  }
+}
+
+.formoftable{
+  margin-bottom: 25px;
+  padding: 0px 0px 30px 0px;
+  width: 100%;
+  }
+
+
+.weekdayNames{
+  clear: both;
+  display: block;
+  width: 300px;
+  padding-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 15px;
+}
+
+.dateInSmall{
+  display: inline;
+  font-weight: 300;
+  font-size: 14px;
+}
+
