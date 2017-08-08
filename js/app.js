@@ -22,46 +22,20 @@ $(document).ready(function(){
   $(".trow").on('click',function(){
     showtodaystasks(time7,1);
   });
-
   /*$(".addtaskform").on('click','.savetask',function(){
     savetask();
   });*/
-
   $(".tasks-list").on('click',".column2",updatetask);
 
-  checkWidth();
-
-
-  $(".taskdate").datepicker({
-    autoclose: true,
-    clearBtn: true,
-    format: 'd M yyyy',
-    todayHighlight: true,
-    startDate: new Date()
-  });
-
   tasksDb = window.openDatabase("tasksdatabase", "1.0", "WebSQL database", 5*1024*1024);
+  instantiateDataBase();
 
-  tasksDb.transaction(
-    function(tx){
-      tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS tasks_list"+
-        "(id INTEGER PRIMARY KEY AUTOINCREMENT"+
-        ", taskinfo TEXT"+
-        ", taskdate DATETIME)"
-      )});
-  tasksDb.transaction(
-    function(tx){
-      tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS deletedtasks"+
-        "(id INTEGER PRIMARY KEY"+
-        ", taskinfo TEXT"+
-        ", taskdate DATETIME)"
-      )});
+  customizeDatePicker();
+  checkWidth();
   insertalltasks();
   updateleftindextasksvalue();
-});
 
+});
 
 //        Global Variables        //
 let currentday = new Date();
@@ -75,57 +49,94 @@ let time7 = ctime + 60*60*24*7;
 let leftindexitemclicked = -1;
 let detachedFormGlobal = 0;
 let weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
-    ,"Saturday"];
+  ,"Saturday"];
+
+//      All DB related functions here   //
+function createTableTaskList(){
+  tasksDb.transaction(
+    function(tx){
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS tasks_list"+
+        "(id INTEGER PRIMARY KEY AUTOINCREMENT"+
+        ", taskinfo TEXT"+
+        ", taskdate DATETIME)"
+      )});
+}
+
+function createTableTaskDeleted(){
+  tasksDb.transaction(
+    function(tx){
+      tx.executeSql(
+        "CREATE TABLE IF NOT EXISTS deletedtasks"+
+        "(id INTEGER PRIMARY KEY"+
+        ", taskinfo TEXT"+
+        ", taskdate DATETIME)"
+      )});
+}
+
+function instantiateDataBase()
+{
+  createTableTaskList();
+  createTableTaskDeleted();
+}
+
+function insertRowInDb(tinfo,tdate){
+  tasksDb.transaction(
+    function(tx){
+      tx.executeSql(
+        "INSERT INTO tasks_list(taskinfo,taskdate) VALUES(?,?)"
+        ,[tinfo,tdate]
+      )});
+}
+
+//   //////////////////////////////////////////////////////////////////////
+
+function customizeDatePicker(){
+  $(".taskdate").datepicker({
+    autoclose: true,
+    clearBtn: true,
+    format: 'd M yyyy',
+    todayHighlight: true,
+    startDate: new Date()
+  });
+}
 
 function checkWidth(){
 
   let width = $(window).width();
   if(width<753){
-    $(".index-toggle").css("visibility","visible");
-    $(".left-index").css("visibility","hidden");
+    $(".index-toggle").show();
+    $(".left-index").hide();
   }
   else if(width>=753){
-    $(".index-toggle").css("visibility","hidden");
-    $(".left-index").css("visibility","visible");
+    $(".index-toggle").hide();
+    $(".left-index").show();
     if($(".fa-times").length>0){
-      $(".index-toggle-links").removeClass("fa-times");
-      $(".index-toggle-links").addClass("fa-bars");
+      $(".index-toggle-links").removeClass("fa-times").addClass("fa-bars");
     }
   }
-  if(width<820){
+  if(width<820)
     $(".left-index ul").css("padding-left","25%");
-  }
-  else{
+  else
     $(".left-index ul").css("padding-left","40%");
-  }
-
 }
 
 function toggleIndex(){
 
-  if($(".left-index").css('visibility') === 'hidden'){
-    $(".left-index").css("visibility","visible");
-    $(".left-index").removeClass("hidden-xs");
-    $(".left-index").removeClass("col-sm-4");
-    $(".left-index").css({"width":"300px", "z-index":"2","position":"absolute","background-color":"#FAFAFA"});
-    $(".main-body").removeClass("col-xs-12");
-    $(".main-body").css("width","100%");
-    $(".index-toggle-links").addClass("fa-times");
-    $(".index-toggle-links").removeClass("fa-bars");
+  if($(".left-index").css('display') === 'none'){
+    $(".left-index").toggle();
+    $(".left-index").removeClass("hidden-xs col-sm-4").addClass("left-index-toggle");
+    $(".main-body").removeClass("col-xs-12").addClass("small-main-body");
+    $(".index-toggle-links").addClass("fa-times").removeClass("fa-bars");
     $(".index-toggle-links").css({"color": "#fff","background-color":"#DB4C3F"});
   }
-
   else{
-    $(".left-index").css("visibility","hidden");
-    $(".left-index").css({"width":"","z-index":"","position":""});
-    $(".left-index").addClass("hidden-xs");
-    $(".left-index").addClass("col-sm-4");
-    $(".main-body").css("width","");
-    $(".main-body").addClass("col-xs-12");
+    $(".left-index").toggle();
+    $(".left-index").removeClass("left-index-toggle").addClass("hidden-xs col-sm-4");
+    $(".main-body").removeClass("small-main-body").addClass("col-xs-12");
     $(".index-toggle-links").removeClass("fa-times").addClass("fa-bars");
     $(".index-toggle-links").css({"background-color": "#DB4C3F","color":"#fff"});
   }
-
 }
 
 function showFormNext7Days(_this,detachedForm){
@@ -176,17 +187,9 @@ function checkandsubmit(){
     if($(".taskinfo").val().length>0){
       let tinfo = $(".taskinfo").val();
       let tdate = $(".taskdate").val();
-      tasksDb.transaction(
-        function(tx){
-          tx.executeSql(
-            "INSERT INTO tasks_list(taskinfo,taskdate) VALUES(?,?)"
-            ,[tinfo,tdate]
-          )});
+      insertRowInDb(tinfo,tdate);
       insertinlist(tinfo,tdate);
       canceltask();
-      //if($(".addtask").length>5){
-      //  $(".addtaskform").appendTo((".addtask"));
-      //}
     }
   }
 }

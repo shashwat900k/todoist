@@ -28,7 +28,7 @@ body.col-xs-12{
 }
 
 .index-toggle{
-  visibility: hidden;
+  display: none;
   .index-toggle-links{
     color: #FFFFFF;
     background-color: #DB4C3F;
@@ -49,6 +49,10 @@ body.col-xs-12{
 }
 .main-body{
   padding-right: 0px;
+}
+
+.small-main-body{
+  width: 100%;
 }
 
 ::-webkit-scrollbar{
@@ -75,6 +79,13 @@ body.col-xs-12{
       }
     }
   }
+}
+
+.left-index-toggle{
+  width: 300px;
+  z-index: 2;
+  position: absolute;
+  background-color: #FAFAFA;
 }
 
 

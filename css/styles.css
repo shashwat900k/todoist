@@ -2345,7 +2345,7 @@ body.col-xs-12 {
   padding: 0px; }
 
 .index-toggle {
-  visibility: hidden; }
+  display: none; }
   .index-toggle .index-toggle-links {
     color: #FFFFFF;
     background-color: #DB4C3F;
@@ -2363,6 +2363,9 @@ body.col-xs-12 {
 
 .main-body {
   padding-right: 0px; }
+
+.small-main-body {
+  width: 100%; }
 
 ::-webkit-scrollbar {
   width: 0px;
@@ -2383,6 +2386,12 @@ body.col-xs-12 {
       display: inline;
       padding-left: 5px;
       font-weight: bold; }
+
+.left-index-toggle {
+  width: 300px;
+  z-index: 2;
+  position: absolute;
+  background-color: #FAFAFA; }
 
 .main-body {
   background-color: #FFF; }
