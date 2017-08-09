@@ -50,6 +50,7 @@ let leftindexitemclicked = -1;
 let detachedFormGlobal = 0;
 let weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
   ,"Saturday"];
+let globalRowId = 0;
 
 //      All DB related functions here   //
 function createTableTaskList(){
@@ -87,6 +88,24 @@ function insertRowInDb(tinfo,tdate){
         "INSERT INTO tasks_list(taskinfo,taskdate) VALUES(?,?)"
         ,[tinfo,tdate]
       )});
+}
+
+function updateRowInDb(rowid,tinfo,tdate){
+  console.log(rowid);
+  tasksDb.transaction(
+    function(tx){
+      tx.executeSql("SELECT * FROM tasks_list WHERE id = ?"
+        ,[rowid]
+        ,function(tx,result){
+          if(tinfo.length!=0){
+            tasksDb.transaction(
+              function(tx){
+                tx.executeSql("UPDATE tasks_list SET taskinfo=?, taskdate=? WHERE id=?"
+                  ,[tinfo,tdate,rowid]);
+              });
+          }
+        });
+    });
 }
 
 //   //////////////////////////////////////////////////////////////////////
@@ -176,57 +195,79 @@ function showform(){
     if($(".addtaskform").css("display")=="none")
       $(".addtaskform").css("display","block");
     else {
-      //checkandsubmit();
+      checkandsubmit();
     }
   }
 }
 
+function decideWhichViewToUpdateAndShow(){
+  if(leftindexitemclicked==1){
+
+  }
+  else if(leftindexitemclicked==2){
+
+  }
+  else if(leftindexitemclicked==3){
+
+  }
+}
+
 function checkandsubmit(){
-  if($(".savetask").length==0){
+  if($(".submittask").text()!="Save"){
     console.log("should not be printed");
     if($(".taskinfo").val().length>0){
       let tinfo = $(".taskinfo").val();
       let tdate = $(".taskdate").val();
       insertRowInDb(tinfo,tdate);
-      insertinlist(tinfo,tdate);
-      canceltask();
     }
   }
+  else{
+    let rowid = parseInt(globalRowId);
+    let tinfo = $(".taskinfo").val();
+    let tdate = $(".taskdate").val();
+    updateRowInDb(rowid,tinfo,tdate);
+    updateleftindextasksvalue();
+    $(".submittask").text("Add Task");
+  }
+  decideWhichViewToUpdateAndShow();
+  canceltask();
 }
 
-function insertinlist(tinfo,tdate){
-  tasksDb.transaction(
-    function(tx){
-      tx.executeSql('SELECT * FROM tasks_list WHERE taskinfo =?'
-        ,[tinfo]
-        ,function(tx,result){
-          let taskid = result.rows.item(0)["id"];
+function setTableRows(trid,tinfo,tdate){
+  for(let j=1;j<=3;j++)
+    $(trid).append("<td class=column"+j+"></td>");
+  let c1 =trid+">.column1";
+  let c2 = trid+">.column2";
+  let c3 = trid+">.column3";
+  $(c1).append("<button></button>");
+  $(c2).append(tinfo);
+  $(c3).append(tdate);
+  $(c2).css("border-bottom","1.5px solid #F0F0F0");
+  $(c3).css("border-bottom","1.5px solid #F0F0F0");
+  return c3;
+}
 
-          if($(".allthetasks").length == 0){
-            $(".tasks-list").prepend("<table class=allthetasks></table>")
-          }
-          let dateConcerned = new Date(tdate);
-          let dateConcernedTime =  dateConcerned.getTime();
-          if(dateConcernedTime-ctime<=24*60*60 && $(".today").length!=0){
-            $(".today table").append("<tr id="+taskid+"></tr>");
-          }
-          /* else if($(".today").length==0){
-            $(".tasks-list table").append("<tr id="+taskid+"></tr>");
-          }*/
-          let trid = "#"+taskid;
-          for(let j=1;j<=3;j++){
-            $(trid).append("<td class=column"+j+"></td>");
-          }
-          let c1 =trid+">.column1";
-          let c2 = trid+">.column2";
-          let c3 = trid+">.column3";
+function checkIfAlreadyInserted(taskId){
+  let searchTaskId = "#"+taskId;
+  let value = $(searchTaskId).length==0?0:1;
+  return value;
+}
 
-          $(c1).append("<button></button>");
-          $(c2).append(result.rows.item(0)["taskinfo"]);
-          $(c3).append(result.rows.item(0)["taskdate"]);
-        });
-    });
+function insertInListInbox(rowid,tinfo,tdate){
+  let taskid = parseInt(rowid);
+  let val = 0;
+  if(checkIfAlreadyInserted(taskid)==0){
+    if($(".allthetasks").length == 0){
+      $(".tasks-list").prepend("<table class=allthetasks></table>")
+    }
+    $(".allthetasks").append("<tr id="+taskid+"></tr>");
+    /* let dateConcerned = new Date(tdate);
+    let dateConcernedTime =  dateConcerned.getTime();*/
+    let trid = "#"+taskid;
+    let val = setTableRows(trid,tinfo,tdate);
+  }
   updateleftindextasksvalue();
+  return val;
 }
 
 function canceltask(){
@@ -234,32 +275,55 @@ function canceltask(){
   $(".addtaskform").css("display","none");
   $(".taskinfo").val('');
   $(".taskdate").val('');
-  if($(".savetask").length>0){
-    $(".savetask").addClass("submittask");
-    $(".submittask").removeClass("savetask");
+  if($(".submittask").text()=="Save")
     $(".submittask").text("Add Task");
+}
 
+function removePropertiesOfOtherView(){
+  if(leftindexitemclicked==1){
+    while($(".addtask").length>1){
+      $(".addtask").not(":last").remove();
+    }
+    $(".maintitle").remove();
+    $(".overduetoday").remove();
+    $(".today").remove();
+    if($(".weekdayNames").length!=0)
+      $(".weekdayNames").remove();
+    for(let i=7;i>=1;i--){
+      let dayValue = ".day"+i;
+      if($(dayValue).length!=0)
+        $(dayValue).remove();
+    }
+    $(".allthetasks").remove();
+  }
+}
+
+function selectDateDisplay(result,c3){
+  let rowdata = result.rows.item(i-1)["taskdate"];
+  let returneddate = new Date(rowdata);
+  returneddate.setMinutes(1);
+  let rtime = returneddate.getTime()/1000;
+  let rday = returneddate.getDay();
+  if(rtime-ctime<=1*60*60*24 && rtime>ctime){
+    $(c3).text("Today");
+  }
+  else if(rtime-ctime<=7*60*60*24 && rtime>=ctime){
+    if(rday-cday()==1 || rday+7-cday()==1){
+      $(c3).text("Tomorrow");
+      $(c3).css({"text-decoration":"underline","text-decoration-color":"#166CEC"});
+    }
+    else{
+      $(c3).text(weekdays[returneddate.getDay()]);
+      $(c3).css({"text-decoration":"underline","text-decoration-color":"#FFB504"});
+    }
   }
 }
 
 function insertalltasks(){
-  while($(".addtask").length>1){
-    $(".addtask").not(":last").remove();
-  }
-  $(".maintitle").remove();
-  $(".overduetoday").remove();
-  $(".today").remove();
-  if($(".weekdayNames").length!=0)
-    $(".weekdayNames").remove();
-  for(let i=7;i>=1;i--){
-    let dayValue = ".day"+i;
-    if($(dayValue).length!=0)
-      $(dayValue).remove();
-  }
-  $(".heading").append("<h4 class=maintitle>Inbox</h4");
   leftindexitemclicked = 1;
+  removePropertiesOfOtherView();
+  $(".heading").append("<h4 class=maintitle>Inbox</h4");
   canceltask();
-  $(".allthetasks").remove();
   $(this).siblings().css("background-color","#FAFAFA");
   $(this).css("background-color","#FFF");
   tasksDb.transaction(
@@ -267,8 +331,7 @@ function insertalltasks(){
       tx.executeSql('SELECT * FROM tasks_list ORDER BY id'
         ,[ ]
         ,function(tx,result){
-
-          $(".tasks-list").prepend("<table class=allthetasks></table>")
+          /*$(".tasks-list").prepend("<table class=allthetasks></table>")
           for(let i=1;i<=result.rows.length;i++){
             let taskid = result.rows.item(i-1)["id"];
             let trid = "#"+taskid;
@@ -277,44 +340,13 @@ function insertalltasks(){
               $(trid).append("<td class=column"+j+"></td>");
             }
           }
-          $(".column1").append("<button></button>");
+          $(".column1").append("<button></button>");*/
           for(let i=1;i<=result.rows.length;i++){
-            let taskid = result.rows.item(i-1)["id"];
-            let trid = "#"+taskid;
-            let c2 = trid+">.column2";
-            let c3 = trid+">.column3";
-            let rowdata = result.rows.item(i-1)["taskdate"];
-            let returneddate = new Date(rowdata);
-            returneddate.setMinutes(1);
-            let rtime = returneddate.getTime()/1000;
-            let rday = returneddate.getDay();
-            $(c2).append(result.rows.item(i-1)["taskinfo"]);
-            //console.log(rtime,ctime,(rtime-ctime)/60*60, result.rows.item(i-1)["taskdate"],currentday,returneddate);
-            if(rtime-ctime<=1*60*60*24 && rtime>ctime){
-              $(c3).append("Today");
-            }
-            else if(rtime-ctime<=7*60*60*24 && rtime>=ctime){
-              let weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-              let colors = []
-              if(returneddate.getDay()-currentday.getDay()==1){
-                $(c3).append("Tomorrow");
-                $(c3).css({"text-decoration":"underline","text-decoration-color":"#166CEC"});
-              }
-              else{
-                $(c3).append(weekday[returneddate.getDay()]);
-                $(c3).css({"text-decoration":"underline","text-decoration-color":"#FFB504"});
-
-              }
-            }
-            else{
-              $(c3).append(result.rows.item(i-1)["taskdate"]);
-            }
-            $(c2).css("border-bottom","1.5px solid #F0F0F0");
-            $(c3).css("border-bottom","1.5px solid #F0F0F0");
+            let c3= insertInListInbox(result.rows.item(i-1)["id"],
+              result.rows.item(i-1)["taskinfo"],result.rows.item(i-1)["taskdate"]);
           }
         });
     });
-
 }
 
 function deletetask(){
@@ -378,9 +410,11 @@ function updateleftindextasksvalue(){
               }
             }
           }
+          if($(".dynamicnumbers").length==0){
           $(target1).append(" <div class=dynamicnumbers>"+ totaltasks+" </div>");
           $(target2).append(" <div class=dynamicnumbers>"+ today+" </div>");
           $(target3).append(" <div class=dynamicnumbers>"+ next7days +" </div>");
+          }
 
         });
     });
@@ -546,31 +580,14 @@ function showtodaystasks(timepassed,flag){
 
 function showsaveform(){
   canceltask();
-  $(".submittask").addClass("savetask");
-  $(".savetask").removeClass("submittask");
-  $(".savetask").text("Save");
+  $(".submittask").text("Save");
   if($(".addtaskform").css("display")=="none")
     $(".addtaskform").css("display","block");
 }
 
-function updatetask(){
-  canceltask();
-  //console.log("hey");
-
-  let row = $(this).parent();
-  /*let dest = $(this);
-  let width = row.css("width");
-  $("<tr class=temprow></tr>").insertAfter(row);
-  $("<td class = tempcol></td>").appendTo(".temprow");
-  $(".addtaskform").detach().appendTo(".tempcol");
-  $(".tempcol").css({"width":width,"display":"block","clear":"both"});
-  */
-
-  let rowid = row.attr('id');
-  showsaveform();
+function showInfoOnTaskToBeUpdatedInForm(rowid){
   tasksDb.transaction(
     function(tx){
-      //console.log("yo");
       tx.executeSql("SELECT * FROM tasks_list WHERE id = ?"
         ,[rowid]
         ,function(tx,result){
@@ -578,49 +595,14 @@ function updatetask(){
           $(".taskdate").val(result.rows.item(0)["taskdate"]);
         });
     });
-  $(".addtaskform").on('click','.savetask',function(){
-    savetask(rowid);
-  });
 }
 
-function savetask(id){
-  let rowid = parseInt(id);
-  let flag = 0;
-  //console.log(rowid);
-  tasksDb.transaction(
-    function(tx){
-      tx.executeSql("SELECT * FROM tasks_list WHERE id = ?"
-        ,[rowid]
-        ,function(tx,result){
-          let tinfo = $(".taskinfo").val();
-          let tdate = $(".taskdate").val();
-          //console.log(tinfo,tdate,rowid);
-          if(tinfo.length!=0){
-            flag = 1;
-            //console.log(flag);
-            tasksDb.transaction(
-              function(tx){
-                tx.executeSql("UPDATE tasks_list SET taskinfo=?, taskdate=? WHERE id=?"
-                  ,[tinfo,tdate,rowid]
-                  ,function(tx,result){
-                    //console.log(result);
-                  }
-                );
-              });
-            canceltask();
-            updateleftindextasksvalue();
-            //console.log("hey");
-            //console.log(leftindexitemclicked);
-            if(leftindexitemclicked==1){
-              insertalltasks();
-            }
-            else if(leftindexitemclicked==2){
-              showtodaystasks(timetoday,0);
-            }
-            else if(leftindexitemclicked==3){
-              showtodaystasks(time7,1);
-            }
-          }
-        });
-    });
+function updatetask(){
+  canceltask();
+  let row = $(this).parent();
+  showsaveform();
+  globalRowId = row.attr('id');
+  let rowid = globalRowId;
+  showInfoOnTaskToBeUpdatedInForm(rowid);
 }
+
