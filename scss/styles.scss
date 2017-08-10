@@ -1,6 +1,5 @@
 @import "font-awesome.scss";
 html,body{
-  padding: 0px;
   margin: 0px;
   background-color: #FAFAFA;
   height: 100%;
@@ -23,8 +22,8 @@ body.col-xs-12{
 .nav-bar{
   background-color: #DB4C3F;
   height: 45px;
-
   padding: 0px;
+  overflow: hidden;
 }
 
 .index-toggle{
@@ -39,29 +38,27 @@ body.col-xs-12{
   }
 }
 
-.content,
 .main-body,
 .left-index{
-  height: 100%;
-  padding: 0px;
-  overflow: auto;
-  //padding-bottom: 20px;
-
-  // overflow-y: hidden;
-}
-.main-body{
-  padding-right: 0px;
+  height: 93.5%;
 }
 
 .small-main-body{
   width: 100%;
 }
 
-::-webkit-scrollbar{
-  width: 0px;
-  background: transparent;
+.main-body{
+  padding-bottom: 10px;
+  overflow: auto;
 }
+
+.main-body::-webkit-scrollbar{
+width: 0px;
+background: transparent;
+}
+
 .left-index{
+  overflow: hidden;
   ul{
     padding-left: 40%;
     padding-top: 10px;
@@ -95,19 +92,19 @@ body.col-xs-12{
   background-color: #FFF;
 }
 
-.addtaskform{
+.add-task-form{
   display: none;
   margin-bottom: 15px;
 }
 
-.taskinfo{
+.task-info{
   width: 77%;
   padding-right: 0px;
   &:focus{
     outline: none;
   }
 }
-.taskdate{
+.task-date{
   width: 20%;
   padding-left: 0px;
   margin-left: -5px;
@@ -115,9 +112,8 @@ body.col-xs-12{
     outline: none;
   }
 }
-.submittask,
-.canceltask,
-.savetask{
+.submit-task,
+.cancel-task,{
   margin-top: 5px;
   border: none;
   width: 90px;
@@ -126,17 +122,17 @@ body.col-xs-12{
     outline: none;
   }
 }
-.submittask,
-.savetask{
+.submit-task,{
   background-color: #DB4C3F;
   color: #fff;
   border: none;
 }
-.canceltask{
+.cancel-task{
   margin-left: 5px;
   border: none;
   background-color: #fff;
 }
+
 .column1{
   button{
     border-radius: 50%;
@@ -147,11 +143,10 @@ body.col-xs-12{
   }
 }
 
-.allthetasks{
+.all-the-tasks{
   width:100%;
   tr{
     width: 100%;
-    //margin: 25px;
     padding: 5px;
     .column1{
       width: 8%;
@@ -162,11 +157,11 @@ body.col-xs-12{
       }
     }
     .column2{
-      width: 77%;
+      width: 75%;
       border-bottom: 2px;
     }
     .column3{
-      width: 15%;
+      width: 17%;
       text-align: right;
       border-bottom: 2px;
     }
@@ -189,13 +184,13 @@ body.col-xs-12{
   }
 }
 
-.dynamicnumbers{
+.dynamic-numbers{
   display: inline;
   padding-left: 12px;
 
 }
 
-.overduetoday h4
+.over-due-today h4
 {
   color: #DD4B39;
   border-bottom: 1.5px solid #CACACA;
@@ -215,13 +210,13 @@ body.col-xs-12{
 }
 
 
-.maintitle{
+.main-title{
   padding: 40px 0px 15px 0px;
   font-size: 28px;
   font-weight: 300;
 }
 
-.addtask{
+.add-task{
   margin-top: 40px;
   color: #DB4C3F;
   &:hover,
@@ -230,14 +225,14 @@ body.col-xs-12{
   }
 }
 
-.formoftable{
+.form-of-table{
   margin-bottom: 25px;
   padding: 0px 0px 30px 0px;
   width: 100%;
-  }
+}
 
 
-.weekdayNames{
+.weekday-names{
   clear: both;
   display: block;
   width: 300px;
@@ -246,7 +241,7 @@ body.col-xs-12{
   margin-top: 15px;
 }
 
-.dateInSmall{
+.date-in-small{
   display: inline;
   font-weight: 300;
   font-size: 14px;

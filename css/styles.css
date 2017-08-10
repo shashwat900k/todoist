@@ -2324,7 +2324,6 @@
   clip: auto; }
 
 html, body {
-  padding: 0px;
   margin: 0px;
   background-color: #FAFAFA;
   height: 100%; }
@@ -2342,7 +2341,8 @@ body.col-xs-12 {
 .nav-bar {
   background-color: #DB4C3F;
   height: 45px;
-  padding: 0px; }
+  padding: 0px;
+  overflow: hidden; }
 
 .index-toggle {
   display: none; }
@@ -2354,38 +2354,38 @@ body.col-xs-12 {
     border-radius: 0px;
     width: 120%; }
 
-.content,
 .main-body,
 .left-index {
-  height: 100%;
-  padding: 0px;
-  overflow: auto; }
-
-.main-body {
-  padding-right: 0px; }
+  height: 93.5%; }
 
 .small-main-body {
   width: 100%; }
 
-::-webkit-scrollbar {
+.main-body {
+  padding-bottom: 10px;
+  overflow: auto; }
+
+.main-body::-webkit-scrollbar {
   width: 0px;
   background: transparent; }
 
-.left-index ul {
-  padding-left: 40%;
-  padding-top: 10px; }
-  .left-index ul li {
-    height: 50px;
-    list-style: none;
-    padding-left: 10px;
+.left-index {
+  overflow: hidden; }
+  .left-index ul {
+    padding-left: 40%;
     padding-top: 10px; }
-    .left-index ul li .left-index-icons {
-      font-weight: 100;
-      font-size: 220%; }
-    .left-index ul li h5 {
-      display: inline;
-      padding-left: 5px;
-      font-weight: bold; }
+    .left-index ul li {
+      height: 50px;
+      list-style: none;
+      padding-left: 10px;
+      padding-top: 10px; }
+      .left-index ul li .left-index-icons {
+        font-weight: 100;
+        font-size: 220%; }
+      .left-index ul li h5 {
+        display: inline;
+        padding-left: 5px;
+        font-weight: bold; }
 
 .left-index-toggle {
   width: 300px;
@@ -2396,42 +2396,39 @@ body.col-xs-12 {
 .main-body {
   background-color: #FFF; }
 
-.addtaskform {
+.add-task-form {
   display: none;
   margin-bottom: 15px; }
 
-.taskinfo {
+.task-info {
   width: 77%;
   padding-right: 0px; }
-  .taskinfo:focus {
+  .task-info:focus {
     outline: none; }
 
-.taskdate {
+.task-date {
   width: 20%;
   padding-left: 0px;
   margin-left: -5px; }
-  .taskdate:focus {
+  .task-date:focus {
     outline: none; }
 
-.submittask,
-.canceltask,
-.savetask {
+.submit-task,
+.cancel-task {
   margin-top: 5px;
   border: none;
   width: 90px;
   height: 36px; }
-  .submittask:focus,
-  .canceltask:focus,
-  .savetask:focus {
+  .submit-task:focus,
+  .cancel-task:focus {
     outline: none; }
 
-.submittask,
-.savetask {
+.submit-task {
   background-color: #DB4C3F;
   color: #fff;
   border: none; }
 
-.canceltask {
+.cancel-task {
   margin-left: 5px;
   border: none;
   background-color: #fff; }
@@ -2443,27 +2440,27 @@ body.col-xs-12 {
   background-color: #fff;
   border: 2px solid #CACACA; }
 
-.allthetasks {
+.all-the-tasks {
   width: 100%;
   margin-bottom: 15px; }
-  .allthetasks tr {
+  .all-the-tasks tr {
     width: 100%;
     padding: 5px; }
-    .allthetasks tr .column1 {
+    .all-the-tasks tr .column1 {
       width: 8%; }
-      .allthetasks tr .column1 button:focus {
+      .all-the-tasks tr .column1 button:focus {
         outline: none; }
-    .allthetasks tr .column2 {
-      width: 77%;
+    .all-the-tasks tr .column2 {
+      width: 75%;
       border-bottom: 2px; }
-    .allthetasks tr .column3 {
-      width: 15%;
+    .all-the-tasks tr .column3 {
+      width: 17%;
       text-align: right;
       border-bottom: 2px; }
-    .allthetasks tr td {
+    .all-the-tasks tr td {
       padding: 7px 0px 7px 7px; }
-    .allthetasks tr .column2,
-    .allthetasks tr .column3 {
+    .all-the-tasks tr .column2,
+    .all-the-tasks tr .column3 {
       padding-left: 2px; }
 
 .tasks-by-day li:hover {
@@ -2471,11 +2468,11 @@ body.col-xs-12 {
   background-color: #fff;
   font-weight: bold; }
 
-.dynamicnumbers {
+.dynamic-numbers {
   display: inline;
   padding-left: 12px; }
 
-.overduetoday h4 {
+.over-due-today h4 {
   color: #DD4B39;
   border-bottom: 1.5px solid #CACACA;
   font-weight: 400;
@@ -2490,23 +2487,23 @@ body.col-xs-12 {
     padding-bottom: 6px;
     font-size: 16px; }
 
-.maintitle {
+.main-title {
   padding: 40px 0px 15px 0px;
   font-size: 28px;
   font-weight: 300; }
 
-.addtask {
+.add-task {
   margin-top: 40px;
   color: #DB4C3F; }
-  .addtask:hover, .addtask:focus {
+  .add-task:hover, .add-task:focus {
     color: #DB4C3F; }
 
-.formoftable {
+.form-of-table {
   margin-bottom: 25px;
   padding: 0px 0px 30px 0px;
   width: 100%; }
 
-.weekdayNames {
+.weekday-names {
   clear: both;
   display: block;
   width: 300px;
@@ -2514,7 +2511,7 @@ body.col-xs-12 {
   margin-bottom: 0px;
   margin-top: 15px; }
 
-.dateInSmall {
+.date-in-small {
   display: inline;
   font-weight: 300;
   font-size: 14px; }

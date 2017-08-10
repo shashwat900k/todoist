@@ -5,11 +5,11 @@ $(document).ready(function(){
   $(".index-toggle-links").on('click',toggleIndex);
   //$(".page-link").on('click',pageProperty);
 
-  $(document).on('click','.addtask', showForm);
+  $(document).on('click','.add-task', showForm);
 
-  $(".tasks-list").on('click',".submittask",checkAndSubmit);
+  $(".tasks-list").on('click',".submit-task",checkAndSubmit);
 
-  $(".tasks-list").on('click',".canceltask",canceltask);
+  $(".tasks-list").on('click',".cancel-task",cancelTask);
 
   $(".tasks-list").on('click','.column1',addDeletedTaskToOtherTable);
 
@@ -18,6 +18,14 @@ $(document).ready(function(){
   $(".srow").on('click',function(){
     showTodaysTasks(timeToday,0);
   });
+
+  $('body').bind('mousewheel', function(e) {
+    var $div = $('.main-body');
+    // set div scroll top offset to current + extra from this scroll
+    $div.scrollTop($div.scrollTop()- e.originalEvent.wheelDelta);
+    return false;
+  });
+
 
   $(".trow").on('click',function(){
     showTodaysTasks(time7,1);
@@ -45,7 +53,7 @@ let time7 = cTime + 60*60*24*7;
 let leftIndexItemClicked = -1;
 let detachedFormGlobal = 0;
 let weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
-  ,"SaturDay"];
+  ,"Saturday"];
 let globalrowId = 0,findDayValue=0;
 let monthNames = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 let returnedDate=0,rTime=0,rDay=0;
@@ -123,7 +131,7 @@ function addDeletedTaskToOtherTable(){
   $(taskToDelete).remove();
   deleteTheRow(taskId);
   updateleftindextasksvalue();
-  canceltask();
+  cancelTask();
 }
 
 function deleteTheRow(taskId){
@@ -133,10 +141,10 @@ function deleteTheRow(taskId){
         [taskId])});
 }
 
-//   //////////////////////////////////////////////////////////////////////
+//   ////////////////////////////////////////////////////////////
 
 function customizeDatePicker(){
-  $(".taskdate").datepicker({
+  $(".task-date").datepicker({
     autoclose: true,
     clearBtn: true,
     format: 'd M yyyy',
@@ -146,7 +154,6 @@ function customizeDatePicker(){
 }
 
 function checkWidth(){
-
   let width = $(window).width();
   if(width<753){
     $(".index-toggle").show();
@@ -166,7 +173,6 @@ function checkWidth(){
 }
 
 function toggleIndex(){
-
   if($(".left-index").css('display') === 'none'){
     $(".left-index").toggle();
     $(".left-index").removeClass("hidden-xs col-sm-4").addClass("left-index-toggle");
@@ -184,36 +190,50 @@ function toggleIndex(){
 }
 
 function showFormNext7Days(_this,detachedForm){
-  canceltask();
+  cancelTask();
   $(_this).addClass("showParticularForm");
   $(detachedForm).insertAfter(".showParticularForm");
-  if($(".addtaskform").css("display")=="none"){
-    $(".addtaskform").css("display","block");
+  if($(".add-task-form").css("display")=="none"){
+    $(".add-task-form").css("display","block");
+    showDefaultDate(_this);
   }
   else
     checkAndSubmit();
 }
 
+function showDefaultDate(_this){
+  if(leftIndexItemClicked==2)
+    $(".task-date").datepicker("setDate",new Date());
+  else{
+    let defaultDate = _this.prev().prev().find('.date-in-small').text();
+    $(".task-date").datepicker("setDate",new Date(defaultDate));
+  }
+}
+
 function showForm(){
-  $(".addtask").removeClass("showParticularForm");
+  $(".add-task").removeClass("showParticularForm");
   $(".addtaskformcloned").remove();
-  if($(".addtaskform").css("display")!="none")
-    $(".addtaskform").css("display","none");
+  if($(".add-task-form").css("display")!="none")
+    $(".add-task-form").css("display","none");
   let detachedForm = null;
 
-  if($(".addtask").length>5){
+  if($(".add-task").length>5){
     let _this = $(this);
-    detachedFormGlobal = $(".addtaskform").detach();
+    detachedFormGlobal = $(".add-task-form").detach();
     showFormNext7Days(_this,detachedFormGlobal);
   }
   else{
     if(detachedFormGlobal != 0){
       detachedForm = detachedFormGlobal;
-      $(detachedForm).insertBefore('.addtask');
+      $(detachedForm).insertBefore('.add-task');
     }
-    canceltask();
-    if($(".addtaskform").css("display")=="none")
-      $(".addtaskform").css("display","block");
+    cancelTask();
+    if($(".add-task-form").css("display")=="none"){
+      $(".add-task-form").css("display","block");
+      if(leftIndexItemClicked!=1){
+        showDefaultDate();
+      }
+    }
     else {
       checkAndSubmit();
     }
@@ -230,24 +250,28 @@ function decideWhichViewToUpdateAndShow(){
 }
 
 function checkAndSubmit(){
-  if($(".submittask").text()!="Save"){
+  if($(".submit-task").text()!="Save"){
     console.log("should not be printed");
-    if($(".taskinfo").val().length>0){
-      let tInfo = $(".taskinfo").val();
-      let tdate = $(".taskdate").val();
+    if($(".task-info").val().length>0){
+      let tInfo = $(".task-info").val();
+      let tdate = $(".task-date").val();
       insertRowInDb(tInfo,tdate);
+      cancelTask();
+      decideWhichViewToUpdateAndShow();
     }
   }
   else{
     let rowId = parseInt(globalrowId);
-    let tInfo = $(".taskinfo").val();
-    let tdate = $(".taskdate").val();
-    updateRowInDb(rowId,tInfo,tdate);
-    updateleftindextasksvalue();
-    $(".submittask").text("Add Task");
+    let tInfo = $(".task-info").val();
+    let tdate = $(".task-date").val();
+    if(tInfo.length>0){
+      updateRowInDb(rowId,tInfo,tdate);
+      updateleftindextasksvalue();
+      $(".submit-task").text("Add Task");
+      cancelTask();
+      decideWhichViewToUpdateAndShow();
+    }
   }
-  decideWhichViewToUpdateAndShow();
-  canceltask();
 }
 
 function checkIfAlreadyInserted(taskId){
@@ -256,28 +280,28 @@ function checkIfAlreadyInserted(taskId){
   return value;
 }
 
-function canceltask(){
-  $(".addtaskform").css("display","none");
-  $(".taskinfo").val('');
-  $(".taskdate").val('');
-  if($(".submittask").text()=="Save")
-    $(".submittask").text("Add Task");
+function cancelTask(){
+  $(".add-task-form").css("display","none");
+  $(".task-info").val('');
+  $(".task-date").val('');
+  if($(".submit-task").text()=="Save")
+    $(".submit-task").text("Add Task");
 }
 
 function removePropertiesOfOtherView(){
-  while($(".addtask").length>1)
-    $(".addtask").not(":last").remove();
-  if($(".weekdayNames").length!=0)
-    $(".weekdayNames").remove();
+  while($(".add-task").length>1)
+    $(".add-task").not(":last").remove();
+  if($(".weekday-names").length!=0)
+    $(".weekday-names").remove();
   for(let i=7;i>=1;i--){
     let dayValue = ".day"+i;
     if($(dayValue).length!=0)
       $(dayValue).remove();
   }
-  canceltask();
-  $(".maintitle").remove();
-  $(".allthetasks").remove();
-  $(".overduetoday").remove();
+  cancelTask();
+  $(".main-title").remove();
+  $(".all-the-tasks").remove();
+  $(".over-due-today").remove();
   $(".today").remove();
   if(leftIndexItemClicked==1){
   }
@@ -319,10 +343,10 @@ function insertInListInbox(rowId,tInfo,tdate){
   let taskId = parseInt(rowId);
   let val = 0;
   if(checkIfAlreadyInserted(taskId)==0){
-    if($(".allthetasks").length == 0){
-      $(".tasks-list").prepend("<table class=allthetasks></table>")
+    if($(".all-the-tasks").length == 0){
+      $(".tasks-list").prepend("<table class=all-the-tasks></table>")
     }
-    $(".allthetasks").append("<tr id="+taskId+"></tr>");
+    $(".all-the-tasks").append("<tr id="+taskId+"></tr>");
     let trid = "#"+taskId;
     val = setTableRows(trid,tInfo,tdate);
   }
@@ -333,8 +357,8 @@ function insertInListInbox(rowId,tInfo,tdate){
 function insertAllTasks(){
   leftIndexItemClicked = 1;
   removePropertiesOfOtherView();
-  $(".heading").append("<h4 class=maintitle>Inbox</h4");
-  canceltask();
+  $(".heading").append("<h4 class=main-title>Inbox</h4");
+  cancelTask();
   $(this).siblings().css("background-color","#FAFAFA");
   $(this).css("background-color","#FFF");
   tasksDb.transaction(
@@ -355,7 +379,7 @@ function updateleftindextasksvalue(){
   let target1 = ".frow>h5";
   let target2 = ".srow>h5";
   let target3 = ".trow>h5";
-  $(".dynamicnumbers").remove();
+  $(".dynamic-numbers").remove();
   tasksDb.transaction(
     function(tx){
       tx.executeSql("SELECT * FROM tasks_list"
@@ -373,10 +397,10 @@ function updateleftindextasksvalue(){
                 next7days +=1;
             }
           }
-          if($(".dynamicnumbers").length==0){
-            $(target1).append(" <div class=dynamicnumbers>"+ totaltasks+" </div>");
-            $(target2).append(" <div class=dynamicnumbers>"+ today+" </div>");
-            $(target3).append(" <div class=dynamicnumbers>"+ next7days +" </div>");
+          if($(".dynamic-numbers").length==0){
+            $(target1).append(" <div class=dynamic-numbers>"+ totaltasks+" </div>");
+            $(target2).append(" <div class=dynamic-numbers>"+ today+" </div>");
+            $(target3).append(" <div class=dynamic-numbers>"+ next7days +" </div>");
           }
         });
     });
@@ -384,40 +408,40 @@ function updateleftindextasksvalue(){
 
 function initializeTodayView(){
   leftIndexItemClicked = 2;
-  $(".heading").append("<h4 class=maintitle>Today</h4");
-  if($(".overduetoday").length==0)
-    $(".tasks-list").prepend("<div class=overduetoday><h4>Overdue</h4></div");
+  $(".heading").append("<h4 class=main-title>Today</h4");
+  if($(".over-due-today").length==0)
+    $(".tasks-list").prepend("<div class=over-due-today><h4>Overdue</h4></div");
   if($(".today").length==0)
-    $(".overduetoday").after("<div class=today><h4>Today</h4></div");
-  $(".overduetoday").append("<table class=allthetasks></table>");
-  $(".today").append("<table class=allthetasks></table>");
+    $(".over-due-today").after("<div class=today><h4>Today</h4></div");
+  $(".over-due-today").append("<table class=all-the-tasks></table>");
+  $(".today").append("<table class=all-the-tasks></table>");
 }
 
 function initializeNext7DaysView(){
   leftIndexItemClicked = 3;
-  $(".heading").append("<h4 class=maintitle>Next 7 days</h4");
+  $(".heading").append("<h4 class=main-title>Next 7 days</h4");
   for(let i=7;i>=1;i--){
     let dayValue = "day"+i;
     $(".tasks-list").prepend("<table class ="+dayValue+"></table>");
     findDayValue = "."+dayValue;
-    $(".tasks-list").find(findDayValue).addClass("allthetasks");
+    $(".tasks-list").find(findDayValue).addClass("all-the-tasks");
     let index = (cDay+(i))%7;
     let dateUpdated = currentDay;
     dateUpdated.setDate(dateUpdated.getDate()+i);
-    $(".tasks-list").prepend("<h4 class=weekdayNames>"+weekdays[index]+
-      " <span class=dateInSmall> "+dateUpdated.getDate()+" "+ monthNames[dateUpdated.getMonth()-1]+
+    $(".tasks-list").prepend("<h4 class=weekday-names>"+weekdays[index]+
+      " <span class=date-in-small> "+dateUpdated.getDate()+" "+ monthNames[dateUpdated.getMonth()-1]+
       " "+dateUpdated.getFullYear()+"</span></h4>");
     dateUpdated.setDate(dateUpdated.getDate()-i);
   }
 }
 
 function createMultipleAddTasks(){
-  let source = ".addtask";
+  let source = ".add-task";
   let temp = $(source);
   for(let i=1;i<=6;i++){
     let placeFormAt = ".day"+i;
     temp.clone().insertAfter(placeFormAt);
-    let formClass = "formoftable";
+    let formClass = "form-of-table";
     $(placeFormAt).next().addClass(formClass);
   }
 }
@@ -450,7 +474,7 @@ function showTodaysTasks(timepassed,flag){
               let trid = "#"+taskId;
               if(flag==0){
                 if(rTime<cTime)
-                  $(".overduetoday table").append("<tr id="+taskId+"></tr>");
+                  $(".over-due-today table").append("<tr id="+taskId+"></tr>");
                 else if(rTime-cTime<=timepassed-cTime)
                   $(".today table").append("<tr id="+taskId+"></tr>");
               }
@@ -473,10 +497,10 @@ function showTodaysTasks(timepassed,flag){
 }
 
 function showsaveform(){
-  canceltask();
-  $(".submittask").text("Save");
-  if($(".addtaskform").css("display")=="none")
-    $(".addtaskform").css("display","block");
+  cancelTask();
+  $(".submit-task").text("Save");
+  if($(".add-task-form").css("display")=="none")
+    $(".add-task-form").css("display","block");
 }
 
 function showInfoOnTaskToBeUpdatedInForm(rowId){
@@ -485,14 +509,14 @@ function showInfoOnTaskToBeUpdatedInForm(rowId){
       tx.executeSql("SELECT * FROM tasks_list WHERE id = ?"
         ,[rowId]
         ,function(tx,result){
-          $(".taskinfo").val(result.rows.item(0)["taskinfo"]);
-          $(".taskdate").val(result.rows.item(0)["taskdate"]);
+          $(".task-info").val(result.rows.item(0)["taskinfo"]);
+          $(".task-date").val(result.rows.item(0)["taskdate"]);
         });
     });
 }
 
 function updateTask(){
-  canceltask();
+  cancelTask();
   let row = $(this).parent();
   showsaveform();
   globalrowId = row.attr('id');
