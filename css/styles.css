@@ -2370,7 +2370,8 @@ body.col-xs-12 {
   background: transparent; }
 
 .left-index {
-  overflow: hidden; }
+  overflow: hidden;
+  padding-right: 0px; }
   .left-index ul {
     padding-left: 40%;
     padding-top: 10px; }
@@ -2386,6 +2387,9 @@ body.col-xs-12 {
         display: inline;
         padding-left: 5px;
         font-weight: bold; }
+
+.left-index-mobile-property {
+  padding-left: 25%; }
 
 .left-index-toggle {
   width: 300px;
