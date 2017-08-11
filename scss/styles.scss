@@ -38,6 +38,11 @@ body.col-xs-12{
   }
 }
 
+.index-toggle-links-toggle-bars{
+  background-color: #DB4C3F;
+  color: #FFF;
+}
+
 .main-body,
 .left-index{
   height: 93.5%;
@@ -58,7 +63,7 @@ background: transparent;
 }
 
 .left-index{
-  overflow: hidden;
+  top: 45px;
   padding-right: 0px;
   ul{
     padding-left: 40%;
@@ -92,9 +97,22 @@ background: transparent;
   background-color: #FAFAFA;
 }
 
+.left-index-toggle-bars{
+  color: #FFF;
+  background-color: #DB4C3F;
+}
+
 
 .main-body{
   background-color: #FFF;
+}
+
+/*.page-specific-heading{
+  display: none();
+}*/
+
+.page-content{
+  display: none;
 }
 
 .add-task-form{

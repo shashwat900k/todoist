@@ -39,8 +39,50 @@
 
     <div class="main-body col-sm-8 col-lg-5 col-xs-12">
       <div class="heading col-xs-12">
+        <h4 class="page-specific-heading inbox-heading">Inbox</h4>
+        <h4 class="page-specific-heading today-heading">Today</h4>
+        <h4 class="page-specific-heading next7days-heading">Next 7 Days</h4>
       </div>
       <div class="tasks-list col-xs-12">
+        <div class="page-content content-index-page">
+          <table class="all-the-tasks">
+          </table>
+        </div>
+        <div class="page-content content-today-page">
+          <div class=over-due-today>
+            <h4>Overdue</h4>
+            <table class=overdue-tasks>
+            </table>
+          </div>
+          <div class=today>
+            <h4>Today</h4>
+            <table class=todays-tasks>
+            </table>
+          </div>
+        </div>
+        <div class="page-content content-next7days-page">
+          <h4 class="weekday-names weekday1"></h4>
+          <table class="day1">
+          </table>
+          <h4 class="weekday-names weekday2"></h4>
+          <table class="day2">
+          </table>
+          <h4 class="weekday-names weekday3"></h4>
+          <table class="day3">
+          </table>
+          <h4 class="weekday-names weekday4"></h4>
+          <table class="day4">
+          </table>
+          <h4 class="weekday-names weekday5"></h4>
+          <table class="day5">
+          </table>
+          <h4 class="weekday-names weekday6"></h4>
+          <table class="day6">
+          </table>
+          <h4 class="weekday-names weekday7"></h4>
+          <table class="day7">
+          </table>
+        </div>
         <form class="add-task-form">
           <input type="text" class="task-info">
           <input type="text" class="task-date" />

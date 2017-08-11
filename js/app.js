@@ -175,15 +175,15 @@ function toggleIndex(){
     $(".left-index").toggle();
     $(".left-index").removeClass("hidden-xs col-sm-4").addClass("left-index-toggle");
     $(".main-body").removeClass("col-xs-12").addClass("small-main-body");
-    $(".index-toggle-links").addClass("fa-times").removeClass("fa-bars");
-    $(".index-toggle-links").css({"color": "#fff","background-color":"#DB4C3F"});
+    $(".index-toggle-links").addClass("fa-times").removeClass("fa-bars")
+      .addClass("left-index-toggle-bars");
   }
   else{
     $(".left-index").toggle();
     $(".left-index").removeClass("left-index-toggle").addClass("hidden-xs col-sm-4");
     $(".main-body").removeClass("small-main-body").addClass("col-xs-12");
-    $(".index-toggle-links").removeClass("fa-times").addClass("fa-bars");
-    $(".index-toggle-links").css({"background-color": "#DB4C3F","color":"#fff"});
+    $(".index-toggle-links").removeClass("fa-times").addClass("fa-bars")
+      .removeClass("left-index-toggle-bars");
   }
 }
 
@@ -248,11 +248,11 @@ function decideWhichViewToUpdateAndShow(){
 }
 
 function checkAndSubmit(){
+  let tInfo = $(".task-info").val();
+  let tdate = $(".task-date").val();
   if($(".submit-task").text()!="Save"){
     console.log("should not be printed");
     if($(".task-info").val().length>0){
-      let tInfo = $(".task-info").val();
-      let tdate = $(".task-date").val();
       insertRowInDb(tInfo,tdate);
       cancelTask();
       decideWhichViewToUpdateAndShow();
@@ -260,8 +260,6 @@ function checkAndSubmit(){
   }
   else{
     let rowId = parseInt(globalRowId);
-    let tInfo = $(".task-info").val();
-    let tdate = $(".task-date").val();
     if(tInfo.length>0){
       updateRowInDb(rowId,tInfo,tdate);
       updateLeftIndexTasksValue();
@@ -287,7 +285,7 @@ function cancelTask(){
 }
 
 function removePropertiesOfOtherView(){
-  while($(".add-task").length>1)
+ /*while($(".add-task").length>1)
     $(".add-task").not(":last").remove();
   if($(".weekday-names").length!=0)
     $(".weekday-names").remove();
@@ -295,14 +293,15 @@ function removePropertiesOfOtherView(){
     let dayValue = ".day"+i;
     if($(dayValue).length!=0)
       $(dayValue).remove();
-  }
+  }*/
   cancelTask();
-  $(".main-title").remove();
-  $(".all-the-tasks").remove();
+  $(".page-content").hide();
+  $(".page-specific-heading").hide();
+  /*$(".all-the-tasks").remove();
   $(".over-due-today").remove();
-  $(".today").remove();
-  if(leftIndexItemClicked==1){
-  }
+  $(".today").remove();*/
+  /*if(leftIndexItemClicked==1){
+  }*/
 }
 
 function selectDateDisplay(rowdate,c3){
@@ -330,6 +329,8 @@ function setTableRows(trid,tInfo,tdate){
   $(c1).append("<button></button>");
   $(c2).append(tInfo);
   $(c3).append(tdate);
+  if(leftIndexItemClicked==3)
+    console.log(tInfo+" "+new Date()+" "+typeof trid);
   if(leftIndexItemClicked!=3){
     $(c2).css("border-bottom","1.5px solid #F0F0F0");
     $(c3).css("border-bottom","1.5px solid #F0F0F0");
@@ -337,15 +338,16 @@ function setTableRows(trid,tInfo,tdate){
   return c3;
 }
 
-function insertInListInbox(rowId,tInfo,tdate){
+function insertRowInTable(tableName,rowId){
+  $(tableName).append("<tr class="+rowId+"></tr>");
+}
+
+function insertInListInbox(rowId,tInfo,tdate,tableName){
   let taskId = parseInt(rowId);
   let val = 0;
   if(checkIfAlreadyInserted(taskId)==0){
-    if($(".all-the-tasks").length == 0){
-      $(".tasks-list").prepend("<table class=all-the-tasks></table>")
-    }
-    $(".all-the-tasks").append("<tr id="+taskId+"></tr>");
-    let trid = "#"+taskId;
+    insertRowInTable(tableName,taskId);
+    let trid = "."+taskId;
     val = setTableRows(trid,tInfo,tdate);
   }
   updateLeftIndexTasksValue();
@@ -355,7 +357,8 @@ function insertInListInbox(rowId,tInfo,tdate){
 function insertAllTasks(){
   leftIndexItemClicked = 1;
   removePropertiesOfOtherView();
-  $(".heading").append("<h4 class=main-title>Inbox</h4");
+  $(".inbox-heading").show();
+  $(".content-index-page").show();
   cancelTask();
   $(this).siblings().css("background-color","#FAFAFA");
   $(this).css("background-color","#FFF");
@@ -366,7 +369,7 @@ function insertAllTasks(){
         ,function(tx,result){
           for(let i=1;i<=result.rows.length;i++){
             let c3= insertInListInbox(result.rows.item(i-1)["id"],
-              result.rows.item(i-1)["taskinfo"],result.rows.item(i-1)["taskdate"]);
+              result.rows.item(i-1)["taskinfo"],result.rows.item(i-1)["taskdate"],".all-the-tasks");
             selectDateDisplay(result.rows.item(i-1)["taskdate"],c3);
           }
         });
@@ -406,28 +409,21 @@ function updateLeftIndexTasksValue(){
 
 function initializeTodayView(){
   leftIndexItemClicked = 2;
-  $(".heading").append("<h4 class=main-title>Today</h4");
-  if($(".over-due-today").length==0)
-    $(".tasks-list").prepend("<div class=over-due-today><h4>Overdue</h4></div");
-  if($(".today").length==0)
-    $(".over-due-today").after("<div class=today><h4>Today</h4></div");
-  $(".over-due-today").append("<table class=all-the-tasks></table>");
-  $(".today").append("<table class=all-the-tasks></table>");
+  $(".today-heading").show();
+  $(".content-today-page").show();
 }
 
 function initializeNext7DaysView(){
   leftIndexItemClicked = 3;
-  $(".heading").append("<h4 class=main-title>Next 7 days</h4");
+  $(".next7days-heading").show();
+  $(".content-next7days-page").show();
   for(let i=7;i>=1;i--){
     let dayValue = "day"+i;
-    $(".tasks-list").prepend("<table class ="+dayValue+"></table>");
-    findDayValue = "."+dayValue;
-    $(".tasks-list").find(findDayValue).addClass("all-the-tasks");
+    let weekdayValue = ".weekday"+i;
     let index = (currentWeekday+(i))%7;
     let dateUpdated = currentDay;
     dateUpdated.setDate(dateUpdated.getDate()+i);
-    $(".tasks-list").prepend("<h4 class=weekday-names>"+weekdays[index]+
-      " <span class=date-in-small> "+dateUpdated.getDate()+" "+ monthNames[dateUpdated.getMonth()-1]+
+    $(weekdayValue).append(weekdays[index]+"<span class=date-in-small> "+dateUpdated.getDate()+" "+ monthNames[dateUpdated.getMonth()-1]+
       " "+dateUpdated.getFullYear()+"</span></h4>");
     dateUpdated.setDate(dateUpdated.getDate()-i);
   }
@@ -472,12 +468,20 @@ function showTodaysTasks(timepassed,flag){
               let rowdate = result.rows.item(i)["taskdate"];
               manipulatereturnedDate(rowdate);
               let taskId = result.rows.item(i)["id"];
-              let trid = "#"+taskId;
+              let trid = "."+taskId;
               if(flag==0){
-                if(returnedTimeInSeconds<currentTimeInSeconds)
-                  $(".over-due-today table").append("<tr id="+taskId+"></tr>");
-                else if(returnedTimeInSeconds-currentTimeInSeconds<=timepassed-currentTimeInSeconds)
-                  $(".today table").append("<tr id="+taskId+"></tr>");
+                if(returnedTimeInSeconds<currentTimeInSeconds){
+                  insertRowInTable(".overdue-tasks",taskId);
+                  console.log("Hi"+taskId);
+                setTableRows(trid,
+                  result.rows.item(i)["taskinfo"],result.rows.item(i)["taskdate"]);
+                }
+                else if(returnedTimeInSeconds-currentTimeInSeconds<=timepassed-currentTimeInSeconds){
+                  insertRowInTable(".todays-tasks",taskId);
+                  console.log("Hey"+taskId);
+                  setTableRows(trid,
+                   result.rows.item(i)["taskinfo"],result.rows.item(i)["taskdate"]);
+                }
               }
               else if(flag==1){
                 if(returnedTimeInSeconds-currentTimeInSeconds<timepassed-currentTimeInSeconds && returnedTimeInSeconds-currentTimeInSeconds>=60*60*24){
@@ -485,11 +489,12 @@ function showTodaysTasks(timepassed,flag){
                   if(dayConcerned<0)
                     dayConcerned = dayConcerned+7;
                   let selectTable = ".day"+dayConcerned;
-                  $(selectTable).append("<tr id="+taskId+"></tr>");
+                  console.log(selectTable);
+                  $(selectTable).append("<tr class="+taskId+"></tr>");
+                  setTableRows(trid,
+                    result.rows.item(i)["taskinfo"],result.rows.item(i)["taskdate"]);
                 }
               }
-              setTableRows(trid,
-                result.rows.item(i)["taskinfo"],result.rows.item(i)["taskdate"]);
             }
             createMultipleAddTasks();
           }
