@@ -114,7 +114,7 @@ function updateRowInDb(rowId,tInfo,tdate){
 
 function addDeletedTaskToArchivedTasksTable(){
   let taskToDelete = $(this).parent();
-  let taskId = parseInt(taskToDelete.attr('id'));
+  let taskId = parseInt(taskToDelete.attr('class'));
   tasksDb.transaction(
     function(tx){
       tx.executeSql("SELECT * FROM tasks_list WHERE id = ?"
