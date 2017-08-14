@@ -19,6 +19,7 @@ body.col-xs-12{
   }
 }
 
+// Nav-bar along with nav-links style when screen size reduced
 .nav-bar{
   background-color: #DB4C3F;
   height: 45px;
@@ -43,25 +44,7 @@ body.col-xs-12{
   color: #FFF;
 }
 
-.main-body,
-.left-index{
-  height: 93.5%;
-}
-
-.small-main-body{
-  width: 100%;
-}
-
-.main-body{
-  padding-bottom: 10px;
-  overflow: auto;
-}
-
-.main-body::-webkit-scrollbar{
-width: 0px;
-background: transparent;
-}
-
+// About left-index(inbox, today, next7days)
 .left-index{
   top: 45px;
   padding-right: 0px;
@@ -102,19 +85,36 @@ background: transparent;
   background-color: #DB4C3F;
 }
 
-
-.main-body{
-  background-color: #FFF;
+.dynamic-numbers{
+  display: inline;
+  padding-left: 12px;
 }
 
-/*.page-specific-heading{
-  display: none();
-}*/
+// About main body
+
+.main-body,
+.left-index{
+  height: 93.5%;
+}
+
+.main-body{
+  padding-bottom: 10px;
+  background-color: #FFF;
+  overflow: auto;
+  &::-webkit-scrollbar{
+    width: 0px;
+    background: transparent;
+  }
+}
+
+.small-main-body{
+  width: 100%;
+}
 
 .page-content{
   display: none;
 }
-
+//  About task form //
 .add-task-form{
   display: none;
   margin-bottom: 15px;
@@ -156,17 +156,9 @@ background: transparent;
   background-color: #fff;
 }
 
-.column1{
-  button{
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    background-color: #fff;
-    border: 2px solid #CACACA;
-  }
-}
+// All tasks are displayed in table styling for that
 
-.all-the-tasks{
+table{
   width:100%;
   tr{
     width: 100%;
@@ -174,6 +166,11 @@ background: transparent;
     .column1{
       width: 8%;
       button{
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: #fff;
+        border: 2px solid #CACACA;
         &:focus{
           outline: none;
         }
@@ -207,12 +204,7 @@ background: transparent;
   }
 }
 
-.dynamic-numbers{
-  display: inline;
-  padding-left: 12px;
-
-}
-
+// Today's tasks
 .over-due-today h4
 {
   color: #DD4B39;
@@ -232,14 +224,15 @@ background: transparent;
   }
 }
 
-
+// Heading for each of the view
 .main-title{
   padding: 40px 0px 15px 0px;
   font-size: 28px;
   font-weight: 300;
 }
 
-.add-task{
+.add-task
+,.add-task-next7days{
   margin-top: 40px;
   color: #DB4C3F;
   &:hover,
@@ -247,13 +240,6 @@ background: transparent;
     color: #DB4C3F;
   }
 }
-
-.form-of-table{
-  margin-bottom: 25px;
-  padding: 0px 0px 30px 0px;
-  width: 100%;
-}
-
 
 .weekday-names{
   clear: both;

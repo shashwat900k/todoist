@@ -2358,21 +2358,6 @@ body.col-xs-12 {
   background-color: #DB4C3F;
   color: #FFF; }
 
-.main-body,
-.left-index {
-  height: 93.5%; }
-
-.small-main-body {
-  width: 100%; }
-
-.main-body {
-  padding-bottom: 10px;
-  overflow: auto; }
-
-.main-body::-webkit-scrollbar {
-  width: 0px;
-  background: transparent; }
-
 .left-index {
   top: 45px;
   padding-right: 0px; }
@@ -2405,12 +2390,25 @@ body.col-xs-12 {
   color: #FFF;
   background-color: #DB4C3F; }
 
-.main-body {
-  background-color: #FFF; }
+.dynamic-numbers {
+  display: inline;
+  padding-left: 12px; }
 
-/*.page-specific-heading{
-  display: none();
-}*/
+.main-body,
+.left-index {
+  height: 93.5%; }
+
+.main-body {
+  padding-bottom: 10px;
+  background-color: #FFF;
+  overflow: auto; }
+  .main-body::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; }
+
+.small-main-body {
+  width: 100%; }
+
 .page-content {
   display: none; }
 
@@ -2451,44 +2449,39 @@ body.col-xs-12 {
   border: none;
   background-color: #fff; }
 
-.column1 button {
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  background-color: #fff;
-  border: 2px solid #CACACA; }
-
-.all-the-tasks {
+table {
   width: 100%;
   margin-bottom: 15px; }
-  .all-the-tasks tr {
+  table tr {
     width: 100%;
     padding: 5px; }
-    .all-the-tasks tr .column1 {
+    table tr .column1 {
       width: 8%; }
-      .all-the-tasks tr .column1 button:focus {
-        outline: none; }
-    .all-the-tasks tr .column2 {
+      table tr .column1 button {
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        background-color: #fff;
+        border: 2px solid #CACACA; }
+        table tr .column1 button:focus {
+          outline: none; }
+    table tr .column2 {
       width: 75%;
       border-bottom: 2px; }
-    .all-the-tasks tr .column3 {
+    table tr .column3 {
       width: 17%;
       text-align: right;
       border-bottom: 2px; }
-    .all-the-tasks tr td {
+    table tr td {
       padding: 7px 0px 7px 7px; }
-    .all-the-tasks tr .column2,
-    .all-the-tasks tr .column3 {
+    table tr .column2,
+    table tr .column3 {
       padding-left: 2px; }
 
 .tasks-by-day li:hover {
   cursor: pointer;
   background-color: #fff;
   font-weight: bold; }
-
-.dynamic-numbers {
-  display: inline;
-  padding-left: 12px; }
 
 .over-due-today h4 {
   color: #DD4B39;
@@ -2510,16 +2503,14 @@ body.col-xs-12 {
   font-size: 28px;
   font-weight: 300; }
 
-.add-task {
+.add-task
+, .add-task-next7days {
   margin-top: 40px;
   color: #DB4C3F; }
-  .add-task:hover, .add-task:focus {
+  .add-task:hover
+  , .add-task:focus
+  , .add-task-next7days:hover, .add-task-next7days:focus {
     color: #DB4C3F; }
-
-.form-of-table {
-  margin-bottom: 25px;
-  padding: 0px 0px 30px 0px;
-  width: 100%; }
 
 .weekday-names {
   clear: both;
