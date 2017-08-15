@@ -2338,6 +2338,7 @@ body.col-xs-12 {
   .bttn:focus {
     outline: none; }
 
+/* Nav-bar along with nav-links style when screen size reduced*/
 .nav-bar {
   background-color: #DB4C3F;
   height: 45px;
@@ -2358,6 +2359,7 @@ body.col-xs-12 {
   background-color: #DB4C3F;
   color: #FFF; }
 
+/* About left-index(inbox, today, next7days) */
 .left-index {
   top: 45px;
   padding-right: 0px; }
@@ -2394,6 +2396,13 @@ body.col-xs-12 {
   display: inline;
   padding-left: 12px; }
 
+.background-color-selected-view {
+  background-color: #FFF; }
+
+.background-color-not-selected-view {
+  background-color: #FAFAFA; }
+
+/* About main body */
 .main-body,
 .left-index {
   height: 93.5%; }
@@ -2412,9 +2421,18 @@ body.col-xs-12 {
 .page-content {
   display: none; }
 
+/*  About task form */
 .add-task-form {
   display: none;
   margin-bottom: 15px; }
+
+.date-info-styling-tomorrow {
+  text-decoration: underline;
+  text-decoration-color: #166CEC; }
+
+.date-info-styling-next7days {
+  text-decoration: underline;
+  text-decoration-color: #FFB504; }
 
 .task-info {
   width: 77%;
@@ -2449,6 +2467,7 @@ body.col-xs-12 {
   border: none;
   background-color: #fff; }
 
+/* All tasks are displayed in table styling for that */
 table {
   width: 100%;
   margin-bottom: 15px; }
@@ -2466,12 +2485,10 @@ table {
         table tr .column1 button:focus {
           outline: none; }
     table tr .column2 {
-      width: 75%;
-      border-bottom: 2px; }
+      width: 75%; }
     table tr .column3 {
       width: 17%;
-      text-align: right;
-      border-bottom: 2px; }
+      text-align: right; }
     table tr td {
       padding: 7px 0px 7px 7px; }
     table tr .column2,
@@ -2482,6 +2499,9 @@ table {
   cursor: pointer;
   background-color: #fff;
   font-weight: bold; }
+
+.task-info-border-styling {
+  border-bottom: 1.5px solid #F0F0F0; }
 
 .over-due-today h4 {
   color: #DD4B39;
@@ -2498,6 +2518,7 @@ table {
     padding-bottom: 6px;
     font-size: 16px; }
 
+/* Heading for each of the view */
 .main-title {
   padding: 40px 0px 15px 0px;
   font-size: 28px;

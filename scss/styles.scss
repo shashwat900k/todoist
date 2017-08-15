@@ -19,7 +19,7 @@ body.col-xs-12{
   }
 }
 
-// Nav-bar along with nav-links style when screen size reduced
+/* Nav-bar along with nav-links style when screen size reduced*/
 .nav-bar{
   background-color: #DB4C3F;
   height: 45px;
@@ -44,7 +44,7 @@ body.col-xs-12{
   color: #FFF;
 }
 
-// About left-index(inbox, today, next7days)
+/* About left-index(inbox, today, next7days) */
 .left-index{
   top: 45px;
   padding-right: 0px;
@@ -90,7 +90,15 @@ body.col-xs-12{
   padding-left: 12px;
 }
 
-// About main body
+.background-color-selected-view{
+  background-color: #FFF;
+}
+
+.background-color-not-selected-view{
+  background-color: #FAFAFA;
+}
+
+/* About main body */
 
 .main-body,
 .left-index{
@@ -114,10 +122,20 @@ body.col-xs-12{
 .page-content{
   display: none;
 }
-//  About task form //
+/*  About task form */
 .add-task-form{
   display: none;
   margin-bottom: 15px;
+}
+
+.date-info-styling-tomorrow{
+  text-decoration: underline;
+  text-decoration-color:#166CEC;
+}
+
+.date-info-styling-next7days{
+  text-decoration: underline;
+  text-decoration-color:#FFB504;
 }
 
 .task-info{
@@ -156,7 +174,7 @@ body.col-xs-12{
   background-color: #fff;
 }
 
-// All tasks are displayed in table styling for that
+/* All tasks are displayed in table styling for that */
 
 table{
   width:100%;
@@ -178,12 +196,10 @@ table{
     }
     .column2{
       width: 75%;
-      border-bottom: 2px;
     }
     .column3{
       width: 17%;
       text-align: right;
-      border-bottom: 2px;
     }
     td{
       padding: 7px 0px 7px 7px;
@@ -204,6 +220,9 @@ table{
   }
 }
 
+.task-info-border-styling{
+  border-bottom: 1.5px solid #F0F0F0;
+}
 // Today's tasks
 .over-due-today h4
 {
@@ -224,7 +243,7 @@ table{
   }
 }
 
-// Heading for each of the view
+/* Heading for each of the view */
 .main-title{
   padding: 40px 0px 15px 0px;
   font-size: 28px;

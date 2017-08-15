@@ -1,3 +1,20 @@
+/*            Global Variables        */
+let currentDay = new Date();
+currentDay.setHours(0);
+currentDay.setMinutes(0);
+currentDay.setSeconds(0);
+let currentTimeInSeconds = currentDay.getTime()/1000;
+let currentWeekday = currentDay.getDay();
+let timeToday = currentTimeInSeconds + 60*60*24*1;
+let timeInNext7Days = currentTimeInSeconds + 60*60*24*7;
+let leftIndexItemClicked = -1;
+let weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
+  ,"Saturday"];
+let globalRowId = 0,findDayValue=0;
+let monthNames = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let returnedDate=0,returnedTimeInSeconds=0,returnedWeekday=0;
+
+/*            Document on ready function    */
 $(document).ready(function(){
 
   $(window).on('resize',checkWidth);
@@ -41,23 +58,8 @@ $(document).ready(function(){
   updateLeftIndexTasksValue();
 
 });
-//        Global Variables        //
-let currentDay = new Date();
-currentDay.setHours(0);
-currentDay.setMinutes(0);
-currentDay.setSeconds(0);
-let currentTimeInSeconds = currentDay.getTime()/1000;
-let currentWeekday = currentDay.getDay();
-let timeToday = currentTimeInSeconds + 60*60*24*1;
-let timeInNext7Days = currentTimeInSeconds + 60*60*24*7;
-let leftIndexItemClicked = -1;
-let weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"
-  ,"Saturday"];
-let globalRowId = 0,findDayValue=0;
-let monthNames = ["Jan","Feb","Mar","Apr","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-let returnedDate=0,returnedTimeInSeconds=0,returnedWeekday=0;
 
-//      All DB related functions here   //
+/*   All DB related functions here   */
 function instantiateDataBase()
 {
   createTableTaskList();
@@ -86,26 +88,26 @@ function createTableTaskDeleted(){
       )});
 }
 
-function insertRowInDb(tInfo,tdate){
+function insertRowInDb(concernedTaskInfo,concernedTaskDate){
   tasksDb.transaction(
     function(tx){
       tx.executeSql(
         "INSERT INTO tasks_list(taskinfo,taskdate) VALUES(?,?)"
-        ,[tInfo,tdate]
+        ,[tInfo,concernedTaskDate]
       )});
 }
 
-function updateRowInDb(rowId,tInfo,tdate){
+function updateRowInDb(rowId,concernedTaskInfo,concernedTaskDate){
   tasksDb.transaction(
     function(tx){
       tx.executeSql("SELECT * FROM tasks_list WHERE id = ?"
         ,[rowId]
         ,function(tx,result){
-          if(tInfo.length!=0){
+          if(concernedTaskInfo.length!=0){
             tasksDb.transaction(
               function(tx){
                 tx.executeSql("UPDATE tasks_list SET taskinfo=?, taskdate=? WHERE id=?"
-                  ,[tInfo,tdate,rowId]);
+                  ,[tInfo,concernedTaskDate,rowId]);
               });
           }
         });
@@ -128,18 +130,18 @@ function addDeletedTaskToArchivedTasksTable(){
         });
     });
   $(taskToDelete).remove();
-  deleteTheRow(taskId);
+  deleteRowInDb(taskId);
   updateLeftIndexTasksValue();
   cancelTask();
 }
 
-function deleteTheRow(taskId){
+function deleteRowInDb(taskId){
   tasksDb.transaction(
     function(tx){
       tx.executeSql("DELETE FROM tasks_list WHERE id = ?",
         [taskId])});
 }
-//   ////////////////////////////////////////////////////////////
+/*       Functions related to UI and responsiveness      */
 
 function customizeDatePicker(){
   $(".task-date").datepicker({
@@ -188,7 +190,7 @@ function toggleIndex(){
 }
 
 function showDefaultDate(_this){
-  if(leftIndexItemClicked==2)
+  if(leftIndexItemClicked=="todayView")
     $(".task-date").datepicker("setDate",new Date());
   else{
     let defaultDate = _this.prev().prev().find('.date-in-small').text();
@@ -196,42 +198,43 @@ function showDefaultDate(_this){
   }
 }
 
+/*      Functions handling all the different events       */
 function showForm(){
   let _this = $(this);
   $(".add-task-form").insertAfter(_this);
   $(".add-task-form").show();
-  if(leftIndexItemClicked!=1)
+  if(leftIndexItemClicked!="inboxView")
     showDefaultDate(_this);
 }
 
-function decideWhichViewToUpdateAndShow(){
-  if(leftIndexItemClicked==1)
+function decideWhichListsOfTasksToShow(){
+  if(leftIndexItemClicked=="inboxView")
     insertAllTasks();
-  else if(leftIndexItemClicked==2)
+  else if(leftIndexItemClicked=="todayView")
     showTodaysTasks(timeToday,0);
-  else if(leftIndexItemClicked==3)
+  else if(leftIndexItemClicked=="next7DaysView")
     showTodaysTasks(timeInNext7Days,1);
 }
 
 function checkAndSubmit(){
-  let tInfo = $(".task-info").val();
-  let tdate = $(".task-date").val();
+  let concernedTaskInfo = $(".task-info").val();
+  let concernedTaskDate = $(".task-date").val();
   if($(".submit-task").text()!="Save"){
     console.log("should not be printed");
     if($(".task-info").val().length>0){
-      insertRowInDb(tInfo,tdate);
+      insertRowInDb(concernedTaskInfo,concernedTaskDate);
       cancelTask();
-      decideWhichViewToUpdateAndShow();
+      decideWhichListsOfTasksToShow();
     }
   }
   else{
     let rowId = parseInt(globalRowId);
-    if(tInfo.length>0){
-      updateRowInDb(rowId,tInfo,tdate);
+    if(concernedTaskInfo.length>0){
+      updateRowInDb(rowId,concernedTaskInfo,concernedTaskDate);
       updateLeftIndexTasksValue();
       $(".submit-task").text("Add Task");
       cancelTask();
-      decideWhichViewToUpdateAndShow();
+      decideWhichListsOfTasksToShow();
     }
   }
 }
@@ -258,16 +261,16 @@ function selectDateDisplay(rowDate,columnContainingTaskDate){
   else if(returnedTimeInSeconds-currentTimeInSeconds<=7*60*60*24 && returnedTimeInSeconds>=currentTimeInSeconds){
     if(returnedWeekday-currentWeekday==1 || returnedWeekday+7-currentWeekday==1){
       $(columnContainingTaskDate).text("Tomorrow");
-      $(columnContainingTaskDate).css({"text-decoration":"underline","text-decoration-color":"#166CEC"});
+      $(columnContainingTaskDate).addClass("date-info-styling-tomorrow");
     }
     else{
       $(columnContainingTaskDate).text(weekdays[returnedDate.getDay()]);
-      $(columnContainingTaskDate).css({"text-decoration":"underline","text-decoration-color":"#FFB504"});
+      $(columnContainingTaskDate).addClass("date-info-styling-next7days");
     }
   }
 }
 
-function setTableRows(tableName,trid,tInfo,tdate){
+function setTableRows(tableName,trid,concernedTaskInfo,concernedTaskDate){
   let rowTableCombination = tableName+">"+trid;
   for(let j=1;j<=3;j++)
     $(rowTableCombination).append("<td class=column"+j+"></td>");
@@ -275,11 +278,11 @@ function setTableRows(tableName,trid,tInfo,tdate){
   let columnContainingTaskInfo = rowTableCombination+">.column2";
   let columnContainingTaskDate = rowTableCombination+">.column3";
   $(columnContainingCheckbox).html("<button></button>");
-  $(columnContainingTaskInfo).html(tInfo);
-  $(columnContainingTaskDate).html(tdate);
-  if(leftIndexItemClicked!=3){
-    $(columnContainingTaskInfo).css("border-bottom","1.5px solid #F0F0F0");
-    $(columnContainingTaskDate).css("border-bottom","1.5px solid #F0F0F0");
+  $(columnContainingTaskInfo).html(concernedTaskInfo);
+  $(columnContainingTaskDate).html(concernedTaskDate);
+  if(leftIndexItemClicked!="next7DaysView"){
+    $(columnContainingTaskInfo).addClass("task-info-border-styling");
+    $(columnContainingTaskDate).addClass("task-info-border-styling");
   }
   return columnContainingTaskDate;
 }
@@ -293,26 +296,26 @@ function checkIfAlreadyInserted(tableName,taskId){
   return $(searchtaskId).length==0?0:1;
 }
 
-function insertInListInbox(rowId,tInfo,tdate,tableName){
+function insertInListInbox(rowId,concernedTaskInfo,concernedTaskDate,tableName){
   let taskId = parseInt(rowId);
   let val = 0;
   if(checkIfAlreadyInserted(tableName,taskId)==0){
     insertRowInTable(tableName,taskId);
     let trid = "."+taskId;
-    val = setTableRows(tableName,trid,tInfo,tdate);
+    val = setTableRows(tableName,trid,concernedTaskInfo,concernedTaskDate);
   }
   updateLeftIndexTasksValue();
   return val;
 }
 
 function insertAllTasks(){
-  leftIndexItemClicked = 1;
+  leftIndexItemClicked = "inboxView";
   removePropertiesOfOtherView();
   $(".inbox-heading").show();
   $(".content-index-page").show();
   cancelTask();
-  $(this).siblings().css("background-color","#FAFAFA");
-  $(this).css("background-color","#FFF");
+  $(this).siblings().addClass("background-color-not-selected-view").removeClass("background-color-selected-view");
+  $(this).removeClass("background-color-not-selected-view").addClass("background-color-selected-view");
   tasksDb.transaction(
     function(tx){
       tx.executeSql('SELECT * FROM tasks_list ORDER BY id'
@@ -328,9 +331,9 @@ function insertAllTasks(){
 }
 
 function updateLeftIndexTasksValue(){
-  let target1 = ".first-row>h5";
-  let target2 = ".second-row>h5";
-  let target3 = ".third-row>h5";
+  let totalNumberOfTasks = ".first-row>h5";
+  let totalNumberOfTasksForToday = ".second-row>h5";
+  let totalNumberOfTasksForNext7Days = ".third-row>h5";
   $(".dynamic-numbers").remove();
   tasksDb.transaction(
     function(tx){
@@ -350,23 +353,23 @@ function updateLeftIndexTasksValue(){
             }
           }
           if($(".dynamic-numbers").length==0){
-            $(target1).append(" <div class=dynamic-numbers>"+ totaltasks+" </div>");
-            $(target2).append(" <div class=dynamic-numbers>"+ today+" </div>");
-            $(target3).append(" <div class=dynamic-numbers>"+ next7days +" </div>");
+            $(totalNumberOfTasks).append(" <div class=dynamic-numbers>"+ totaltasks+" </div>");
+            $(totalNumberOfTasksForToday).append(" <div class=dynamic-numbers>"+ today+" </div>");
+            $(totalNumberOfTasksForNext7Days).append(" <div class=dynamic-numbers>"+ next7days +" </div>");
           }
         });
     });
 }
 
 function initializeTodayView(){
-  leftIndexItemClicked = 2;
+  leftIndexItemClicked = "todayView";
   $(".today-heading").show();
   $(".content-today-page").show();
   $(".add-task").show();
 }
 
 function initializeNext7DaysView(){
-  leftIndexItemClicked = 3;
+  leftIndexItemClicked = "next7DaysView";
   $(".add-task").show();
   $(".next7days-heading").show();
   $(".content-next7days-page").show();
@@ -411,8 +414,9 @@ function showTodaysTasks(timepassed,flag){
     leftIndexElement = ".third-row";
     initializeNext7DaysView();
   }
-  $(leftIndexElement).siblings().css("background-color","#FAFAFA");
-  $(leftIndexElement).css("background-color","#FFF");
+  $(leftIndexElement).siblings().addClass("background-color-not-selected-view").removeClass("background-color-selected-view");
+;
+  $(leftIndexElement).addClass("background-color-selected-view").removeClass("background-color-not-selected-view");
   tasksDb.transaction(
     function(tx){
       tx.executeSql("SELECT * FROM tasks_list"
