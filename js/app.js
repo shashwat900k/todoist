@@ -141,12 +141,21 @@ function deleteRowInDb(taskId){
         [taskId])});
 }
 
-function selectRowsFromDb(callback,timepassed=undefined,flag=undefined){
+function selectRowsFromDb(callback,timepassed=undefined,flag=undefined,id=undefined){
   returnedResultFromQuery = [];
+  let query = '';
+  if(id==undefined){
+    query = "SELECT * FROM tasks_list ORDER BY id";
+    id = [];
+  }
+  else{
+    query = "SELECT * FROM tasks_list WHERE id = ?";
+    id = [parseInt(id)];
+  }
   tasksDb.transaction(
     function(tx){
-      tx.executeSql('SELECT * FROM tasks_list ORDER BY id'
-        ,[ ],function(tx,result){
+      tx.executeSql(query
+        ,id,function(tx,result){
           for(let i=0;i<result.rows.length;i++){
             let row = result.rows.item(i);
             returnedResultFromQuery[i] = {
@@ -481,23 +490,20 @@ function showsaveform(){
     $(".add-task-form").css("display","block");
 }
 
+function showInfoOfTaskInTheForm(result){
+  $(".task-info").val(result[0].taskinfo);
+  $(".task-date").val(result[0].taskdate);
+}
+
 function showInfoOnTaskToBeUpdatedInForm(rowId){
-  tasksDb.transaction(
-    function(tx){
-      tx.executeSql("SELECT * FROM tasks_list WHERE id = ?"
-        ,[rowId]
-        ,function(tx,result){
-          $(".task-info").val(result.rows.item(0)["taskinfo"]);
-          $(".task-date").val(result.rows.item(0)["taskdate"]);
-        });
-    });
+  selectRowsFromDb(showInfoOfTaskInTheForm,undefined,undefined,rowId);
 }
 
 function updateTask(){
   cancelTask();
   let row = $(this).parent();
   showsaveform();
-  globalRowId = row.attr('id');
+  globalRowId = row.attr('class');
   let rowId = globalRowId;
   showInfoOnTaskToBeUpdatedInForm(rowId);
 }
